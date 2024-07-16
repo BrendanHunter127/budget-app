@@ -3,9 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { setUsers, selectUsers } from '../features/userSlice';
 
+// Define the User interface (if not already defined in the slice)
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
 const UserList: React.FC = () => {
   const dispatch = useDispatch();
-  const users = useSelector(selectUsers);
+  const users: User[] = useSelector(selectUsers);
 
   useEffect(() => {
     axios.post('/api/graphql', {
@@ -27,7 +34,7 @@ const UserList: React.FC = () => {
     <div>
       <h1>User List</h1>
       <ul>
-        {users.map(user => (
+        {users.map((user: User) => (
           <li key={user.id}>{user.name} - {user.email}</li>
         ))}
       </ul>

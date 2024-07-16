@@ -1,5 +1,5 @@
-# Use an official Node.js runtime as a parent image
-FROM node:16-alpine
+# Stage 1: Build the application
+FROM node:latest AS build
 
 # Set the working directory in the container
 WORKDIR /app
@@ -16,9 +16,11 @@ COPY . .
 # Build the application
 RUN npm run build
 
-# Use a lightweight web server to serve the built files
+# Stage 2: Serve the application with Nginx
 FROM nginx:alpine
-COPY --from=0 /app/dist /usr/share/nginx/html
+
+# Copy the built application from the previous stage
+COPY --from=build /app/.next /usr/share/nginx/html
 
 # Expose port 80
 EXPOSE 80
