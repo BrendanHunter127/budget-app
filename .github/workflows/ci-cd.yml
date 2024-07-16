@@ -1,0 +1,89 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: budgeting_app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies for backend
+      working-directory: ./backend
+      run: npm install
+
+    - name: Install dependencies for frontend
+      working-directory: ./frontend
+      run: npm install
+
+    - name: Build backend
+      working-directory: ./backend
+      run: npm run build
+
+    - name: Build frontend
+      working-directory: ./frontend
+      run: npm run build
+
+    - name: Run backend tests
+      working-directory: ./backend
+      env:
+        TYPEORM_CONNECTION: postgres
+        TYPEORM_HOST: localhost
+        TYPEORM_PORT: 5432
+        TYPEORM_USERNAME: user
+        TYPEORM_PASSWORD: password
+        TYPEORM_DATABASE: budgeting_app
+      run: npm test
+
+    - name: Run frontend tests
+      working-directory: ./frontend
+      run: npm test
+
+    - name: Build and push Docker images
+      env:
+        DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+        DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      run: |
+        docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_ACCESS_TOKEN
+        docker build -t $DOCKER_HUB_USERNAME/budgeting-app-backend:latest ./backend
+        docker build -t $DOCKER_HUB_USERNAME/budgeting-app-frontend:latest ./frontend
+        docker push $DOCKER_HUB_USERNAME/budgeting-app-backend:latest
+        docker push $DOCKER_HUB_USERNAME/budgeting-app-frontend:latest
+
+    - name: Deploy to AWS (example step)
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: us-west-2
+      run: |
+        # Deploy steps here, e.g., using AWS CLI to update ECS service
+        echo "Deploying to AWS"

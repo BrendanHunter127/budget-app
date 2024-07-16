@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: budgeting_app
+      TYPEORM_CONNECTION: postgres
+      TYPEORM_HOST: db
+      TYPEORM_PORT: 5432
+      TYPEORM_USERNAME: user
+      TYPEORM_PASSWORD: password
+      TYPEORM_DATABASE: budgeting_app
+      TYPEORM_SYNCHRONIZE: "true"
+      TYPEORM_LOGGING: "false"
+      TYPEORM_ENTITIES: "dist/**/*.entity.js"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: budgeting_app
+    ports:
+      - "5432:5432"
