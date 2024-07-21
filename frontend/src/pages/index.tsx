@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
 import BudgetCard from '../components/BudgetCard';
+require('dotenv').config();
+
 
 const Home: React.FC = () => {
   const [creditScore, setCreditScore] = useState<number | null>(null);

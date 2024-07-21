@@ -17,8 +17,11 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "rootDir": "./src" // Add rootDir
+    "rootDir": "./" // Set rootDir to the root of the project
   },
-  "include": ["src/**/*.ts"], // Add include field
-  "exclude": ["node_modules"] // Add exclude field
+  "include": [
+    "src/**/*.ts",
+    "credit-score-api/src/**/*.ts" // Include the additional source directory
+  ],
+  "exclude": ["node_modules"]
 }
