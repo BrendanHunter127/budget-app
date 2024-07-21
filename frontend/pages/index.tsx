@@ -2,24 +2,27 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
 import BudgetCard from '../components/BudgetCard';
+//import ExpenseForm from './components/ExpenseForm';
+import PlaidLinkButton from '../components/PlaidLinkButton';
 
-const Home: React.FC = () => {
+const IndexPage: React.FC = () => {
   const [creditScore, setCreditScore] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const userId = 'user-id-123'; // Replace this with the actual user ID from your authentication system
 
-  useEffect(() => {
-    axios.get('/api/credit-score')
-      .then(response => {
-        setCreditScore(response.data.score);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching credit score:', error);
-        setError('Failed to fetch credit score. Please try again later.');
-        setLoading(false);
-      });
-  }, []);
+  // useEffect(() => {
+  //   axios.get('/api/credit-score')
+  //     .then(response => {
+  //       setCreditScore(response.data.score);
+  //       setLoading(false);
+  //     })
+  //     .catch(error => {
+  //       console.error('Error fetching credit score:', error);
+  //       setError('Failed to fetch credit score. Please try again later.');
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   return (
     <Layout>
@@ -45,8 +48,14 @@ const Home: React.FC = () => {
           </div>
         )}
       </div>
+      <div>
+        <h1>Welcome to the Budgeting App</h1>
+        <PlaidLinkButton userId={userId} />
+      </div>
+      <h2 className="text-2xl font-bold my-4">Add New Expense</h2>
+   
     </Layout>
   );
 };
 
-export default Home;
+export default IndexPage;

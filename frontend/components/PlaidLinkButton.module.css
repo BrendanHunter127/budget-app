@@ -1,0 +1,20 @@
+/* PlaidLinkButton.module.css */
+@font-face {
+    font-family: 'Inconsolata';
+    src: url('/fonts/Inconsolata-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  .buttonRed {
+    background-color: red;
+    color: white;
+    font-family: 'Inconsolata', 'Courier New', Courier, monospace; /* Add fallback fonts */
+  }
+  
+  
+  .successMessage {
+    color: green;
+    font-weight: bold;
+    margin-top: 10px;
+  }

@@ -1,3 +1,4 @@
+// pages/api/plaid/get_accounts.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
 
@@ -14,17 +15,17 @@ const configuration = new Configuration({
 const plaidClient = new PlaidApi(configuration);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { publicToken } = req.body;
+  const { accessToken } = req.body;
 
   try {
-    const response = await plaidClient.itemPublicTokenExchange({ public_token: publicToken });
-    res.status(200).json(response.data);
+    const response = await plaidClient.accountsGet({ access_token: accessToken });
+    res.status(200).json({ success: true, accounts: response.data.accounts });
   } catch (error) {
-    // Using type guard
+    console.error('Error fetching accounts:', error);
     if (error instanceof Error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ success: false, error: error.message });
     } else {
-      res.status(500).json({ error: 'An unknown error occurred' });
+      res.status(500).json({ success: false, error: 'An unknown error occurred' });
     }
   }
 }

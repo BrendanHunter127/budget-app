@@ -14,6 +14,15 @@ const configuration = new Configuration({
 const plaidClient = new PlaidApi(configuration);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS'); // Allow methods
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization'); // Allow headers
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end(); // End preflight requests
+    return;
+  }
+
   const { userId } = req.body;
 
   try {

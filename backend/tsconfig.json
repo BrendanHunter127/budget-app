@@ -9,19 +9,27 @@
     "target": "ES2021",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": "./", // Base directory for non-relative module names
     "incremental": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "rootDir": "./" // Set rootDir to the root of the project
+    "rootDir": "./", // Root directory of input files
+    "paths": {
+      "*": ["node_modules/*"],
+      "config/*": ["config/*"],
+      "plaid/*": ["plaid/*"],
+      "user/*": ["user/*"]
+    }
   },
   "include": [
     "src/**/*.ts",
-    "credit-score-api/src/**/*.ts" // Include the additional source directory
+    "ormconfig.ts", // Include the ormconfig.ts file
+    "credit-score-api/src/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }
