@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Layout from '../components/Layout';
 import BudgetCard from '../components/BudgetCard';
-require('dotenv').config();
-
 
 const Home: React.FC = () => {
   const [creditScore, setCreditScore] = useState<number | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     axios.get('/api/credit-score')
@@ -17,6 +16,7 @@ const Home: React.FC = () => {
       })
       .catch(error => {
         console.error('Error fetching credit score:', error);
+        setError('Failed to fetch credit score. Please try again later.');
         setLoading(false);
       });
   }, []);
@@ -33,6 +33,8 @@ const Home: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4">Credit Score</h2>
         {loading ? (
           <p>Loading...</p>
+        ) : error ? (
+          <p>{error}</p>
         ) : (
           <div className="bg-white p-4 rounded shadow-md">
             {creditScore !== null ? (
