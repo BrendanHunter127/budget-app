@@ -1,7 +1,7 @@
-# Stage 1: Build the application
-FROM node:latest AS build
+# Use an official Node.js runtime as a parent image
+FROM node:18-alpine
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
 # Copy the package.json and package-lock.json files
@@ -13,17 +13,8 @@ RUN npm install
 # Copy the rest of the application code
 COPY . .
 
-# Build the application
-RUN npm run build
+# Expose the port the app runs on
+EXPOSE 3001
 
-# Stage 2: Serve the application with Nginx
-FROM nginx:alpine
-
-# Copy the built application from the previous stage
-COPY --from=build /app/.next /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Command to run the application
+CMD ["npm", "run", "dev"]

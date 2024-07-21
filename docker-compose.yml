@@ -1,12 +1,10 @@
-version: '3.7'
-
 services:
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "80:80"
+      - "3001:3001"
     depends_on:
       - backend
 
@@ -15,29 +13,35 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: budgeting_app
       TYPEORM_CONNECTION: postgres
       TYPEORM_HOST: db
       TYPEORM_PORT: 5432
-      TYPEORM_USERNAME: user
+      TYPEORM_USERNAME: myuser
       TYPEORM_PASSWORD: password
       TYPEORM_DATABASE: budgeting_app
       TYPEORM_SYNCHRONIZE: "true"
       TYPEORM_LOGGING: "false"
       TYPEORM_ENTITIES: "dist/**/*.entity.js"
     ports:
-      - "3000:3000"
+      - "5000:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    entrypoint: ["./wait-for-it.sh", "db:5432", "--", "npm", "run", "start"]
 
   db:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: myuser
       POSTGRES_PASSWORD: password
       POSTGRES_DB: budgeting_app
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./backend/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
